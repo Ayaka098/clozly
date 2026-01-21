@@ -5,7 +5,7 @@ import { readCache, writeCache, buildCacheKey } from "@/lib/cache";
 import { fetchCandidates } from "@/lib/worker";
 import { mockItems } from "@/lib/mock";
 import { selectTopFour } from "@/lib/scoring";
-import type { ItemType } from "@/lib/types";
+import type { ItemType, SearchRequest } from "@/lib/types";
 
 const requestSchema = z.object({
   freeText: z.string().min(1),
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const input = parsed.data;
+  const input: SearchRequest = parsed.data;
   const effectiveInput = {
     ...input,
     budgetMax: input.budgetMax >= 20000 ? Number.MAX_SAFE_INTEGER : input.budgetMax
