@@ -1,0 +1,335 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { CandidateItem, SearchResponse, SearchRequest, UserProfile } from "@/lib/types";
+import { imageStore } from "@/lib/localImage";
+import { loadProfile, saveProfile } from "@/lib/profile";
+import ProductCard from "@/components/ProductCard";
+
+const defaultRequest: SearchRequest = {
+  freeText: "白のきれいめトップス",
+  itemType: "tops",
+  budgetMin: 3000,
+  budgetMax: 12000,
+  season: "春",
+  color: "白",
+  material: "",
+  mood: "きれいめ",
+  exclude: []
+};
+
+const itemOptions = [
+  { value: "tops", label: "トップス" },
+  { value: "outer", label: "アウター" },
+  { value: "bottoms", label: "ボトムス" },
+  { value: "onepiece", label: "ワンピース" },
+  { value: "shoes", label: "シューズ" },
+  { value: "bags", label: "バッグ" },
+  { value: "others", label: "その他" }
+];
+
+export default function AppClient() {
+  const [request, setRequest] = useState<SearchRequest>(defaultRequest);
+  const [items, setItems] = useState<CandidateItem[]>([]);
+  const [queryPlan, setQueryPlan] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<UserProfile>({});
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [usedCache, setUsedCache] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = loadProfile();
+    if (stored) setProfile(stored);
+    imageStore.load().then((file) => {
+      if (!file) return;
+      setImageUrl(URL.createObjectURL(file));
+    });
+  }, []);
+
+  const prompt = useMemo(() => {
+    const size = profile.usualSize ? `サイズ感は${profile.usualSize}。` : "";
+    return `全身写真の人物が、以下の服を試着しているイメージを生成してください。\n` +
+      `服の説明: ${request.freeText}。${request.color ?? ""} ${request.mood ?? ""} ${request.material ?? ""}\n` +
+      `${size}\n` +
+      `背景はシンプルに。`;
+  }, [profile.usualSize, request]);
+
+  const handleProfileChange = (key: keyof UserProfile, value: string) => {
+    const next = { ...profile, [key]: value };
+    setProfile(next);
+    saveProfile(next);
+  };
+
+  const handleSearch = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...request,
+          exclude: request.exclude?.filter(Boolean)
+        })
+      });
+      if (!response.ok) throw new Error("Search failed");
+      const data = (await response.json()) as SearchResponse;
+      setItems(data.items);
+      setQueryPlan(data.queryPlan);
+      setUsedCache(data.usedCache);
+    } catch (err) {
+      setError("検索に失敗しました。条件を変えて再試行してください。");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file) return;
+    await imageStore.save(file);
+    setImageUrl(URL.createObjectURL(file));
+  };
+
+  const handleImageClear = async () => {
+    await imageStore.clear();
+    setImageUrl(null);
+  };
+
+  return (
+    <section className="card fade-in">
+      <div id="search" className="grid-2">
+        <div className="card">
+          <h2>欲しい服を入力</h2>
+          <p>自由記述＋条件で、Clozlyが4件に編集します。</p>
+          <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
+            <div>
+              <div className="label">自由記述</div>
+              <textarea
+                className="input"
+                rows={3}
+                value={request.freeText}
+                onChange={(event) =>
+                  setRequest({ ...request, freeText: event.target.value })
+                }
+              />
+            </div>
+            <div>
+              <div className="label">アイテム種別</div>
+              <select
+                className="input"
+                value={request.itemType}
+                onChange={(event) =>
+                  setRequest({ ...request, itemType: event.target.value as SearchRequest["itemType"] })
+                }
+              >
+                {itemOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid-2">
+              <div>
+                <div className="label">予算下限</div>
+                <input
+                  className="input"
+                  type="number"
+                  value={request.budgetMin}
+                  onChange={(event) =>
+                    setRequest({ ...request, budgetMin: Number(event.target.value) })
+                  }
+                />
+              </div>
+              <div>
+                <div className="label">予算上限</div>
+                <input
+                  className="input"
+                  type="number"
+                  value={request.budgetMax}
+                  onChange={(event) =>
+                    setRequest({ ...request, budgetMax: Number(event.target.value) })
+                  }
+                />
+              </div>
+            </div>
+            <div className="grid-2">
+              <div>
+                <div className="label">季節</div>
+                <input
+                  className="input"
+                  value={request.season ?? ""}
+                  onChange={(event) =>
+                    setRequest({ ...request, season: event.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <div className="label">色</div>
+                <input
+                  className="input"
+                  value={request.color ?? ""}
+                  onChange={(event) =>
+                    setRequest({ ...request, color: event.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="grid-2">
+              <div>
+                <div className="label">素材</div>
+                <input
+                  className="input"
+                  value={request.material ?? ""}
+                  onChange={(event) =>
+                    setRequest({ ...request, material: event.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <div className="label">雰囲気</div>
+                <input
+                  className="input"
+                  value={request.mood ?? ""}
+                  onChange={(event) =>
+                    setRequest({ ...request, mood: event.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div>
+              <div className="label">NGワード</div>
+              <input
+                className="input"
+                placeholder="例: セット, 福袋"
+                value={(request.exclude ?? []).join(",")}
+                onChange={(event) =>
+                  setRequest({
+                    ...request,
+                    exclude: event.target.value.split(",").map((value) => value.trim())
+                  })
+                }
+              />
+            </div>
+            <button className="btn" onClick={handleSearch} disabled={loading}>
+              {loading ? "検索中..." : "4件を提案"}
+            </button>
+            {error && <p>{error}</p>}
+            {usedCache && <p>キャッシュ結果を表示中</p>}
+          </div>
+        </div>
+        <div id="basics" className="card">
+          <h2>基本情報</h2>
+          <p>わかる範囲で入力してください。</p>
+          <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
+            <div className="grid-2">
+              <div>
+                <div className="label">身長</div>
+                <input
+                  className="input"
+                  placeholder="cm"
+                  value={profile.height ?? ""}
+                  onChange={(event) => handleProfileChange("height", event.target.value)}
+                />
+              </div>
+              <div>
+                <div className="label">体重</div>
+                <input
+                  className="input"
+                  placeholder="kg"
+                  value={profile.weight ?? ""}
+                  onChange={(event) => handleProfileChange("weight", event.target.value)}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="label">普段サイズ</div>
+              <input
+                className="input"
+                value={profile.usualSize ?? ""}
+                onChange={(event) => handleProfileChange("usualSize", event.target.value)}
+              />
+            </div>
+            <div>
+              <div className="label">体型傾向</div>
+              <input
+                className="input"
+                value={profile.bodyType ?? ""}
+                onChange={(event) => handleProfileChange("bodyType", event.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="card" style={{ marginTop: 18 }}>
+        <h2>4件の候補</h2>
+        <p>似すぎを避けて、納得できる4件を編集。</p>
+        {queryPlan.length > 0 && (
+          <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {queryPlan.map((query) => (
+              <span key={query} className="tag">{query}</span>
+            ))}
+          </div>
+        )}
+        <div style={{ marginTop: 16 }} className="grid-4">
+          {items.map((item) => (
+            <ProductCard key={item.id} item={item} />
+          ))}
+        </div>
+      </div>
+      <div className="grid-2" style={{ marginTop: 18 }}>
+        <div id="account" className="card">
+          <h2>アカウント</h2>
+          <p>ログイン情報と全身画像を管理します。</p>
+          <div style={{ marginTop: 12, display: "grid", gap: 12 }}>
+            <p>ログイン状態の確認は右上のアイコンから。</p>
+          </div>
+        </div>
+        <div className="card">
+          <h2>全身画像の保存</h2>
+          <p>試着イメージ生成のために、全身画像をローカル保存します。</p>
+          <div style={{ marginTop: 12, display: "grid", gap: 12 }}>
+            <input
+              className="input"
+              type="file"
+              accept="image/*"
+              onChange={(event) => handleImageUpload(event.target.files?.[0] ?? null)}
+            />
+            {imageUrl && (
+              <img
+                src={imageUrl}
+                alt="全身画像"
+                style={{ width: "100%", borderRadius: 16, border: "1px solid var(--line)" }}
+              />
+            )}
+            <button className="btn btn-secondary" onClick={handleImageClear}>
+              画像を削除
+            </button>
+          </div>
+        </div>
+        <div className="card">
+          <h2>Gemini用プロンプト</h2>
+          <p>全身画像を添えて、Gemini/Nano Bananaで生成してください。</p>
+          <textarea className="input" rows={8} value={prompt} readOnly />
+          <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+            <button
+              className="btn"
+              onClick={() => navigator.clipboard.writeText(prompt)}
+            >
+              プロンプトをコピー
+            </button>
+            {imageUrl && (
+              <a className="btn btn-secondary" href={imageUrl} download="clozly-fullbody">
+                画像をダウンロード
+              </a>
+            )}
+          </div>
+          <p style={{ marginTop: 12 }}>
+            生成画像はClozly側で保存しません。サイズは必ず公式サイズ表で確認してください。
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}

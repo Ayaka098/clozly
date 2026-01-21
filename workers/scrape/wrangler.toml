@@ -1,0 +1,6 @@
+name = "clozly-scrape"
+main = "src/index.ts"
+compatibility_date = "2024-06-20"
+
+[vars]
+ALLOWED_ORIGINS = "http://localhost:3000"
