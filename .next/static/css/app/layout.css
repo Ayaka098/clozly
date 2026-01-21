@@ -178,15 +178,24 @@ button, input, select, textarea {
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 24px;
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: "Fraunces", serif;
   font-weight: 600;
   font-size: 2.7rem;
   color: var(--ink);
   text-decoration: none;
+}
+
+.logo-mark {
+  width: 66px;
+  height: 66px;
+  object-fit: contain;
 }
 
 .tabs {
