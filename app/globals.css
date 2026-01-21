@@ -429,3 +429,60 @@ button, input, select, textarea {
     transform: translateY(0);
   }
 }
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(155deg, #ffe9de 0%, #fbdac8 48%, #e8b8a6 100%);
+  display: grid;
+  place-items: center;
+  z-index: 2000;
+}
+
+.splash-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.splash-mark {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 40px rgba(48, 28, 20, 0.22));
+  animation: markFade 0.5s ease both;
+}
+
+.splash-word {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  letter-spacing: 0.02em;
+  color: #2f241c;
+  opacity: 0;
+  transform: translateX(-28px);
+  animation: wordSlide 1.4s ease forwards;
+  animation-delay: 0.6s;
+}
+
+@keyframes wordSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes markFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
