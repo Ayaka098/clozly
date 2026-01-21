@@ -476,6 +476,7 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   gap: 16px;
+  transform: translateX(-8px);
 }
 
 .splash-mark {

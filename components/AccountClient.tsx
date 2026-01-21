@@ -9,7 +9,7 @@ import { UserProfile } from "@/lib/types";
 export default function AccountClient() {
   const { data } = useSession();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [description, setDescription] = useState("白のきれいめトップス");
+  const [description, setDescription] = useState("");
   const [profile, setProfile] = useState<UserProfile>({});
   const [toast, setToast] = useState<string | null>(null);
 

@@ -5,10 +5,11 @@ import { CandidateItem, SearchRequest, SearchResponse } from "@/lib/types";
 import ProductCard from "@/components/ProductCard";
 
 const defaultRequest: SearchRequest = {
-  freeText: "白のきれいめトップス",
+  freeText: "",
   itemType: "tops",
   budgetMin: 3000,
   budgetMax: 12000,
+  gender: undefined,
   season: [],
   color: [],
   material: [],
@@ -30,6 +31,11 @@ const seasonOptions = ["春", "夏", "秋", "冬"];
 const colorOptions = ["白", "黒", "ベージュ", "ブラウン", "グレー", "ネイビー", "ブルー", "グリーン"];
 const materialOptions = ["コットン", "リネン", "ウール", "ニット", "デニム", "レザー"];
 const moodOptions = ["きれいめ", "カジュアル", "モード", "ミニマル", "オフィス", "リラックス"];
+const genderOptions = [
+  { value: "", label: "指定なし" },
+  { value: "womens", label: "レディース" },
+  { value: "mens", label: "メンズ" }
+];
 
 const BUDGET_MIN = 100;
 const BUDGET_MAX = 20000;
@@ -115,6 +121,7 @@ export default function SearchClient() {
             className="input"
             rows={3}
             value={request.freeText}
+            placeholder="詳しい条件を書いてください。例：ダメージジーンズ、きらきら"
             onChange={(event) =>
               setRequest({ ...request, freeText: event.target.value })
             }
@@ -130,6 +137,27 @@ export default function SearchClient() {
                 data-selected={request.itemType === option.value}
                 onClick={() =>
                   setRequest({ ...request, itemType: option.value as SearchRequest["itemType"] })
+                }
+                type="button"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="field">
+          <div className="label">対象</div>
+          <div className="chip-group">
+            {genderOptions.map((option) => (
+              <button
+                key={option.value || "none"}
+                className="chip"
+                data-selected={(request.gender ?? "") === option.value}
+                onClick={() =>
+                  setRequest({
+                    ...request,
+                    gender: option.value ? (option.value as "mens" | "womens") : undefined
+                  })
                 }
                 type="button"
               >
