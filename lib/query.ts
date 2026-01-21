@@ -22,10 +22,10 @@ export function buildQueries(request: SearchRequest) {
   const itemWords = itemSynonyms[request.itemType] ?? ["服"];
   base.push(...itemWords.slice(0, 2));
 
-  if (request.color) base.push(request.color);
-  if (request.season) base.push(request.season);
+  if (request.color?.length) base.push(request.color[0]);
+  if (request.season?.length) base.push(request.season[0]);
   if (request.mood) base.push(request.mood);
-  if (request.material) base.push(request.material);
+  if (request.material?.length) base.push(request.material[0]);
 
   const normalized = normalizeText(request.freeText);
   const tokens = normalized.split(" ").filter(Boolean);
@@ -33,8 +33,8 @@ export function buildQueries(request: SearchRequest) {
   const queries = new Set<string>();
   queries.add([base[0], ...tokens.slice(0, 2)].join(" "));
   queries.add([base[1] ?? base[0], ...tokens.slice(0, 2)].join(" "));
-  queries.add([base[0], request.mood, request.color].filter(Boolean).join(" "));
-  queries.add([base[0], request.season, request.material].filter(Boolean).join(" "));
+  queries.add([base[0], request.mood, request.color?.[0]].filter(Boolean).join(" "));
+  queries.add([base[0], request.season?.[0], request.material?.[0]].filter(Boolean).join(" "));
   queries.add(tokens.join(" "));
 
   return Array.from(queries).filter((query) => query.length > 1).slice(0, 6);

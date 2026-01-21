@@ -1,31 +1,25 @@
 "use client";
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 function initials(name?: string | null) {
-  if (!name) return "C";
+  if (!name) return "";
   return name.trim().split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 }
 
 export default function AuthBar() {
   const { data } = useSession();
-
-  if (data?.user) {
-    return (
-      <div className="auth-bar">
-        <div className="auth-circle">{initials(data.user.name)}</div>
-        <button className="btn btn-secondary" onClick={() => signOut()}>
-          ログアウト
-        </button>
-      </div>
-    );
-  }
+  const label = initials(data?.user?.name);
 
   return (
-    <div className="auth-bar">
-      <button className="btn" onClick={() => signIn("google")}>
-        Googleでログイン
-      </button>
-    </div>
+    <Link
+      href="/account"
+      className="auth-circle"
+      data-logged-in={Boolean(data?.user)}
+      aria-label="アカウント"
+    >
+      {label || ""}
+    </Link>
   );
 }

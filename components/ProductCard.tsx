@@ -2,8 +2,8 @@ import { CandidateItem } from "@/lib/types";
 
 export default function ProductCard({ item }: { item: CandidateItem }) {
   return (
-    <div className="card" style={{ display: "grid", gap: 10 }}>
-      <div style={{ aspectRatio: "3 / 4", borderRadius: 14, overflow: "hidden", border: "1px solid var(--line)" }}>
+    <div className="card product-card">
+      <div className="product-image">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}

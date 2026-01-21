@@ -12,14 +12,15 @@ function supabaseClient() {
 }
 
 export function buildCacheKey(request: SearchRequest) {
+  const maxKey = request.budgetMax >= 20000 ? "unlimited" : Math.floor(request.budgetMax / 1000) * 1000;
   return [
     "v1",
     request.itemType,
     Math.floor(request.budgetMin / 1000) * 1000,
-    Math.floor(request.budgetMax / 1000) * 1000,
-    request.season ?? "",
-    request.color ?? "",
-    request.material ?? "",
+    maxKey,
+    request.season?.join(",") ?? "",
+    request.color?.join(",") ?? "",
+    request.material?.join(",") ?? "",
     request.mood ?? "",
     normalizeText(request.freeText)
   ].join(":");

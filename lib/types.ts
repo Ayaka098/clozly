@@ -12,9 +12,9 @@ export type SearchRequest = {
   itemType: ItemType;
   budgetMin: number;
   budgetMax: number;
-  season?: string;
-  color?: string;
-  material?: string;
+  season?: string[];
+  color?: string[];
+  material?: string[];
   mood?: string;
   exclude?: string[];
 };

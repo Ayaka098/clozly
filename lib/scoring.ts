@@ -17,9 +17,9 @@ export function scoreCandidate(item: CandidateItem, request: SearchRequest) {
   score += 30; // itemType is enforced by query
   score += 20; // budget match already filtered
 
-  if (request.color && text.includes(request.color)) score += 10;
-  if (request.season && text.includes(request.season)) score += 10;
-  if (request.material && text.includes(request.material)) score += 10;
+  if (request.color?.some((color) => text.includes(color))) score += 10;
+  if (request.season?.some((season) => text.includes(season))) score += 10;
+  if (request.material?.some((material) => text.includes(material))) score += 10;
   if (request.mood && text.includes(request.mood)) score += 10;
 
   const keywords = request.freeText.split(/\s+/).filter(Boolean);

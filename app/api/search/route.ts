@@ -11,9 +11,9 @@ const requestSchema = z.object({
   itemType: z.string(),
   budgetMin: z.number().min(0),
   budgetMax: z.number().min(0),
-  season: z.string().optional(),
-  color: z.string().optional(),
-  material: z.string().optional(),
+  season: z.array(z.string()).optional(),
+  color: z.array(z.string()).optional(),
+  material: z.array(z.string()).optional(),
   mood: z.string().optional(),
   exclude: z.array(z.string()).optional()
 });
@@ -26,19 +26,23 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
-  const cacheKey = buildCacheKey(input);
+  const effectiveInput = {
+    ...input,
+    budgetMax: input.budgetMax >= 20000 ? Number.MAX_SAFE_INTEGER : input.budgetMax
+  };
+  const cacheKey = buildCacheKey(effectiveInput);
   const cached = await readCache(cacheKey);
   if (cached) {
     return NextResponse.json({ ...cached, usedCache: true });
   }
 
-  const queries = buildQueries(input);
+  const queries = buildQueries(effectiveInput);
   let candidates = await fetchCandidates(queries).catch(() => null);
   if (!candidates || candidates.length === 0) {
-    candidates = mockItems(input);
+    candidates = mockItems(effectiveInput);
   }
 
-  const items = selectTopFour(candidates, input).map((item, index) => ({
+  const items = selectTopFour(candidates, effectiveInput).map((item, index) => ({
     ...item,
     sizePrediction: index % 2 === 0 ? "M" : "L"
   }));
