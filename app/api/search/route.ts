@@ -5,10 +5,19 @@ import { readCache, writeCache, buildCacheKey } from "@/lib/cache";
 import { fetchCandidates } from "@/lib/worker";
 import { mockItems } from "@/lib/mock";
 import { selectTopFour } from "@/lib/scoring";
+import type { ItemType } from "@/lib/types";
 
 const requestSchema = z.object({
   freeText: z.string().min(1),
-  itemType: z.string(),
+  itemType: z.enum([
+    "tops",
+    "outer",
+    "bottoms",
+    "onepiece",
+    "shoes",
+    "bags",
+    "others"
+  ] satisfies ItemType[]),
   budgetMin: z.number().min(0),
   budgetMax: z.number().min(0),
   season: z.array(z.string()).optional(),
