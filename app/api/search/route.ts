@@ -5,10 +5,19 @@ import { readCache, writeCache, buildCacheKey } from "@/lib/cache";
 import { fetchCandidates } from "@/lib/worker";
 import { mockItems } from "@/lib/mock";
 import { selectTopFour } from "@/lib/scoring";
+import type { ItemType, SearchRequest } from "@/lib/types";
 
 const requestSchema = z.object({
   freeText: z.string().min(1),
-  itemType: z.string(),
+  itemType: z.enum([
+    "tops",
+    "outer",
+    "bottoms",
+    "onepiece",
+    "shoes",
+    "bags",
+    "others"
+  ] satisfies ItemType[]),
   budgetMin: z.number().min(0),
   budgetMax: z.number().min(0),
   season: z.array(z.string()).optional(),
@@ -25,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const input = parsed.data;
+  const input: SearchRequest = parsed.data;
   const effectiveInput = {
     ...input,
     budgetMax: input.budgetMax >= 20000 ? Number.MAX_SAFE_INTEGER : input.budgetMax
