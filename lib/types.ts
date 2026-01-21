@@ -44,5 +44,7 @@ export type UserProfile = {
   height?: string;
   weight?: string;
   usualSize?: string;
+  fitPreference?: "ゆるめ" | "ジャスト" | "タイト";
+  stylePreferences?: string[];
   bodyType?: string;
 };

@@ -100,7 +100,7 @@ export default function AppClient() {
       setUsedCache(data.usedCache);
       setNote(data.note ?? null);
     } catch (err) {
-      setError("検索に失敗しました。条件を変えて再試行してください。");
+      setError("検索結果がありませんでした。条件を変えて再試行してください。");
     } finally {
       setLoading(false);
     }
@@ -276,7 +276,14 @@ export default function AppClient() {
               onClick={handleSearch}
               disabled={loading || cooldownLeft > 0}
             >
-              {loading ? "検索中..." : "4件を提案"}
+              {loading ? (
+                <span className="btn-loading">
+                  <span className="btn-spinner" aria-hidden="true" />
+                  検索中...
+                </span>
+              ) : (
+                "4件を提案"
+              )}
             </button>
             {cooldownLeft > 0 && (
               <p style={{ fontSize: "0.85rem", color: "var(--mute)" }}>
@@ -285,7 +292,6 @@ export default function AppClient() {
             )}
             {error && <p>{error}</p>}
             {usedCache && <p>キャッシュ結果を表示中</p>}
-            {note && <p>{note}</p>}
           </div>
         </div>
       </div>
@@ -305,10 +311,10 @@ export default function AppClient() {
           ))}
         </div>
         {hasSearched && items.length > 0 && items.length < 4 && (
-          <p style={{ marginTop: 12 }}>候補が一部不足しています。</p>
+          <p style={{ marginTop: 12 }}>{note ?? "候補が一部不足しています。"}</p>
         )}
         {hasSearched && items.length === 0 && !error && (
-          <p style={{ marginTop: 12 }}>候補が見つかりませんでした。</p>
+          <p style={{ marginTop: 12 }}>{note ?? "候補が見つかりませんでした。"}</p>
         )}
       </div>
       <div className="grid-2" style={{ marginTop: 18 }}>
