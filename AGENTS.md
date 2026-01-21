@@ -313,6 +313,10 @@ YESが多い変更だけ採用する。
 - READMEを詳細に更新（絵文字入りで概要/構成/セットアップを記載）
 - `app/api/search/route.ts` のitemTypeを厳格化（Zod enum）して型エラー修正
 - `app/api/search/route.ts` で `parsed.data` を `SearchRequest` に明示し、型エラーを再発防止
+- `z.enum` の定義を `as const` 配列に変更してビルドエラーを修正
+- `components/AppClient.tsx` の初期値を配列型（season/color/material）に修正
+- `components/AppClient.tsx` の入力欄を配列対応に修正（カンマ区切り）
+- `tsconfig.json` に `baseUrl` を追加して非相対パスの型エラーを修正
 - `components/AuthBar.tsx`のJSX文字列エスケープを修正（ビルドエラー対応）
 - タブを画面左右いっぱいに伸ばす（PC/スマホ共通）
 - タブバーは全幅にしつつ、タブの幅は固定のままに調整
@@ -369,3 +373,7 @@ YESが多い変更だけ採用する。
 - 「README.mdを詳細に書いてほしい（絵文字込み）。」
 - 「Vercelビルドの型エラー（itemTypeがstring）を修正してほしい。」
 - 「マージ後も同じ型エラーが出るので修正してほしい。」
+- 「z.enumの型エラーを直してほしい。」
+- 「AppClientのseason/color/materialが配列でないためビルド失敗、修正してほしい。」
+- 「AppClientのseason入力が配列型でないエラーを修正してほしい。」
+- 「Non-relative paths are not allowed のビルドエラーを修正してほしい。」
