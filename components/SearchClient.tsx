@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CandidateItem, SearchRequest, SearchResponse } from "@/lib/types";
-import ProductCard from "@/components/ProductCard";
+import { useRouter } from "next/navigation";
+import { SearchRequest, SearchResponse } from "@/lib/types";
+import { saveSearchSession } from "@/lib/searchSession";
 
 const defaultRequest: SearchRequest = {
   freeText: "",
@@ -42,8 +43,8 @@ const BUDGET_MAX = 20000;
 const BUDGET_STEP = 100;
 
 export default function SearchClient() {
+  const router = useRouter();
   const [request, setRequest] = useState<SearchRequest>(defaultRequest);
-  const [items, setItems] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,9 +68,10 @@ export default function SearchClient() {
       });
       if (!response.ok) throw new Error("Search failed");
       const data = (await response.json()) as SearchResponse;
-      setItems(data.items);
+      saveSearchSession(request, data);
+      router.push("/results");
     } catch (err) {
-      setError("検索に失敗しました。条件を変えて再試行してください。");
+      setError("検索結果がありませんでした。条件を変えて再試行してください。");
     } finally {
       setLoading(false);
     }
@@ -282,14 +284,16 @@ export default function SearchClient() {
           />
         </div>
         <button className="btn" onClick={handleSearch} disabled={loading}>
-          {loading ? "検索中..." : "探す"}
+          {loading ? (
+            <span className="btn-loading">
+              <span className="btn-spinner" aria-hidden="true" />
+              検索中...
+            </span>
+          ) : (
+            "探す"
+          )}
         </button>
         {error && <p>{error}</p>}
-      </div>
-      <div className="results-grid">
-        {items.map((item) => (
-          <ProductCard key={item.id} item={item} />
-        ))}
       </div>
     </section>
   );

@@ -4,7 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 
 const tabs = [
   { href: "/search", label: "探す" },
-  { href: "/quiz", label: "タイプ診断" }
+  { href: "/quiz", label: "タイプ診断" },
+  { href: "/tryon", label: "試着" }
 ];
 
 export default function TopNav() {

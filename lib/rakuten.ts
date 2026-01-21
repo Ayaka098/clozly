@@ -16,6 +16,18 @@ type RakutenResponse = {
 };
 
 const endpoint = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706";
+const IMAGE_SIZE = "800x800";
+
+const normalizeImageUrl = (url?: string) => {
+  if (!url) return undefined;
+  if (url.includes("_ex=")) {
+    return url.replace(/_ex=\d+x\d+/, `_ex=${IMAGE_SIZE}`);
+  }
+  if (url.includes("?")) {
+    return `${url}&_ex=${IMAGE_SIZE}`;
+  }
+  return `${url}?_ex=${IMAGE_SIZE}`;
+};
 
 export async function fetchRakutenCandidates({
   keyword,
@@ -57,7 +69,9 @@ export async function fetchRakutenCandidates({
     site: "rakuten",
     name: Item.itemName,
     price: Item.itemPrice,
-    imageUrl: Item.mediumImageUrls?.[0]?.imageUrl ?? Item.smallImageUrls?.[0]?.imageUrl,
+    imageUrl: normalizeImageUrl(
+      Item.mediumImageUrls?.[0]?.imageUrl ?? Item.smallImageUrls?.[0]?.imageUrl
+    ),
     url: Item.itemUrl,
     brand: Item.shopName,
     summary: Item.itemCaption

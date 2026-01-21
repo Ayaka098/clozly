@@ -51,6 +51,16 @@ export async function POST(request: Request) {
   const mainQuery = buildMainQuery(effectiveInput);
   queryPlan.push(mainQuery);
 
+  const filterCount =
+    (effectiveInput.season?.length ?? 0) +
+    (effectiveInput.color?.length ?? 0) +
+    (effectiveInput.material?.length ?? 0) +
+    (effectiveInput.exclude?.length ?? 0) +
+    (effectiveInput.mood?.trim() ? 1 : 0) +
+    (effectiveInput.gender ? 1 : 0);
+  const keywordCount = effectiveInput.freeText.trim().split(/\s+/).filter(Boolean).length;
+  const isLikelyTooStrict = filterCount >= 2 || (filterCount >= 1 && keywordCount >= 3);
+
   let candidates = await fetchRakutenCandidates({
     keyword: mainQuery,
     minPrice: effectiveInput.budgetMin,
@@ -105,7 +115,12 @@ export async function POST(request: Request) {
       sizePrediction: index % 2 === 0 ? "M" : "L"
     })),
     usedCache: false,
-    note: items.length < 4 ? "候補が不足しています" : undefined
+    note:
+      items.length < 4
+        ? isLikelyTooStrict
+          ? "条件が多すぎる可能性があります。条件を減らして再度お試しください。"
+          : "候補が不足しています"
+        : undefined
   };
 
   await writeCache(cacheKey, payload);
