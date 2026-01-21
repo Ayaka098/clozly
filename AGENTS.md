@@ -337,18 +337,35 @@ YESが多い変更だけ採用する。
 - ブラウザタブのタイトルを設定し、メタディスクリプション/OGP説明文を更新
 - ファビコンを文字入りロゴ画像に変更（`/Clozly_ロゴ_文字入り.png`）
 - メタディスクリプション/OGP説明文から「4点」の表現を削除
+- Rakuten Ichiba APIの候補取得を追加し、検索APIで最優先に利用するよう更新（`RAKUTEN_APPLICATION_ID`対応）
+- 検索APIはRakutenのみを使用する構成に変更（Amazon/ZozoスクレイピングはMVPで未使用）
+- キャッシュキーを並び順に依存しないよう正規化し、予算帯の丸め幅を拡大してヒット率を改善
+- スコアリングにブランド/説明文を含め、アイテム種別のヒント語で加点するよう改善
+- README.mdをRakuten API中心の仕様に更新（環境変数・検索ロジック・注意点を修正）
+- Push Protectionで`.env.local`がブロックされたため、秘密情報を含むコミットを履歴から削除して対応（`develop`先頭コミットは`966f8ac`）
+- 「基本情報」タブ/ページを削除し、プロフィール入力をアカウントページへ統合
+- モバイル時のタブ崩れを防ぐため、タブ幅を可変＆折り返し対応に調整
+- タブバーの高さを約80%に圧縮（タブ自体のサイズは維持）
+- タブ列のみ上下余白を詰め、ロゴ周りは据え置きのままタブバー高さをさらに圧縮
+
+### 現状まとめ（最新状態）
+- 商品取得はRakuten Ichiba APIのみを使用（Amazon/ZozoスクレイピングはMVPで未使用）
+- Rakuten App IDが未設定の場合はモック候補を返す設計
+- 4件候補はRakuten APIから取得できる状態を確認済み（画像/リンク遷移OK）
+- キャッシュキーは配列順序非依存＋予算帯の丸めでヒット率を上げている
+- スコアリングは商品名＋ブランド＋説明文を含むテキストで評価
 
 ### まだ未実施（あなたの作業が必要）
 - Vercel/Supabase/Cloudflare/Google OAuthの実アカウント設定
 - SupabaseのDB作成と環境変数の投入
-- Workersのデプロイと`WORKER_SCRAPE_URL`設定
+- Workersのデプロイと`WORKER_SCRAPE_URL`設定（スクレイピング運用に戻す場合のみ）
 - `npm install`による依存関係のインストール
 
 ### 注意点
 - スクレイピングはHTML構造依存のため、実運用前にセレクタ調整が必要
 - Googleログインは環境変数未設定だと動作しない
 - Supabase環境変数が未設定の場合はメモリキャッシュのみで動作
-- Workersが未設定の場合はモック商品を返す設計
+- Rakuten App IDが未設定の場合はモック商品を返す設計
 
 ### 動作確認の最短手順（未実施）
 - `npm install`
@@ -358,8 +375,9 @@ YESが多い変更だけ採用する。
 ### 主要ファイルと役割
 - `app/page.tsx`: 画面構成
 - `components/AppClient.tsx`: 入力・検索・画像保存・プロンプト生成のロジック
-- `app/api/search/route.ts`: 検索API（クエリ生成→スクレイピング→4件選定）
+- `app/api/search/route.ts`: 検索API（クエリ生成→Rakuten API→4件選定）
 - `lib/scoring.ts`: スコアリング/除外/多様性制御
+- `lib/rakuten.ts`: Rakuten Ichiba APIの取得・整形
 - `workers/scrape/src/index.ts`: Workersスクレイピング実装
 - `supabase/schema.sql`: キャッシュテーブル定義
 
@@ -393,3 +411,6 @@ YESが多い変更だけ採用する。
 - 「AppClientのseason/color/materialが配列でないためビルド失敗、修正してほしい。」
 - 「AppClientのseason入力が配列型でないエラーを修正してほしい。」
 - 「Non-relative paths are not allowed のビルドエラーを修正してほしい。」
+- 「これまでの変遷と実装内容をAGENTS.mdとREADME.mdに書いてください。」
+- 「これまでの流れを全部、必要なところ、現在に反映されているところをAGENTS.mdに記載してください。」
+- 「基本情報タブをなくして、アカウントに統合してほしい。」

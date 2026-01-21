@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CandidateItem, SearchResponse, SearchRequest, UserProfile } from "@/lib/types";
 import { imageStore } from "@/lib/localImage";
-import { loadProfile, saveProfile } from "@/lib/profile";
+import { loadProfile } from "@/lib/profile";
 import ProductCard from "@/components/ProductCard";
 
 const defaultRequest: SearchRequest = {
@@ -56,12 +56,6 @@ export default function AppClient() {
       `${size}\n` +
       `背景はシンプルに。`;
   }, [profile.usualSize, request]);
-
-  const handleProfileChange = (key: keyof UserProfile, value: string) => {
-    const next = { ...profile, [key]: value };
-    setProfile(next);
-    saveProfile(next);
-  };
 
   const handleSearch = async () => {
     setLoading(true);
@@ -237,48 +231,6 @@ export default function AppClient() {
             </button>
             {error && <p>{error}</p>}
             {usedCache && <p>キャッシュ結果を表示中</p>}
-          </div>
-        </div>
-        <div id="basics" className="card">
-          <h2>基本情報</h2>
-          <p>わかる範囲で入力してください。</p>
-          <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
-            <div className="grid-2">
-              <div>
-                <div className="label">身長</div>
-                <input
-                  className="input"
-                  placeholder="cm"
-                  value={profile.height ?? ""}
-                  onChange={(event) => handleProfileChange("height", event.target.value)}
-                />
-              </div>
-              <div>
-                <div className="label">体重</div>
-                <input
-                  className="input"
-                  placeholder="kg"
-                  value={profile.weight ?? ""}
-                  onChange={(event) => handleProfileChange("weight", event.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="label">普段サイズ</div>
-              <input
-                className="input"
-                value={profile.usualSize ?? ""}
-                onChange={(event) => handleProfileChange("usualSize", event.target.value)}
-              />
-            </div>
-            <div>
-              <div className="label">体型傾向</div>
-              <input
-                className="input"
-                value={profile.bodyType ?? ""}
-                onChange={(event) => handleProfileChange("bodyType", event.target.value)}
-              />
-            </div>
           </div>
         </div>
       </div>

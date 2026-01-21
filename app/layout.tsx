@@ -41,7 +41,9 @@ export default function RootLayout({
                     />
                     <span className="logo-text">Clozly</span>
                   </Link>
-                  <TopNav />
+                  <div className="tabbar">
+                    <TopNav />
+                  </div>
                 </div>
                 <AuthBar />
               </div>
