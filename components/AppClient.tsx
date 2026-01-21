@@ -11,9 +11,9 @@ const defaultRequest: SearchRequest = {
   itemType: "tops",
   budgetMin: 3000,
   budgetMax: 12000,
-  season: "春",
-  color: "白",
-  material: "",
+  season: ["春"],
+  color: ["白"],
+  material: [],
   mood: "きれいめ",
   exclude: []
 };
@@ -49,8 +49,10 @@ export default function AppClient() {
 
   const prompt = useMemo(() => {
     const size = profile.usualSize ? `サイズ感は${profile.usualSize}。` : "";
+    const colors = request.color?.join(" ") ?? "";
+    const materials = request.material?.join(" ") ?? "";
     return `全身写真の人物が、以下の服を試着しているイメージを生成してください。\n` +
-      `服の説明: ${request.freeText}。${request.color ?? ""} ${request.mood ?? ""} ${request.material ?? ""}\n` +
+      `服の説明: ${request.freeText}。${colors} ${request.mood ?? ""} ${materials}\n` +
       `${size}\n` +
       `背景はシンプルに。`;
   }, [profile.usualSize, request]);
@@ -159,9 +161,15 @@ export default function AppClient() {
                 <div className="label">季節</div>
                 <input
                   className="input"
-                  value={request.season ?? ""}
+                  value={(request.season ?? []).join(",")}
                   onChange={(event) =>
-                    setRequest({ ...request, season: event.target.value })
+                    setRequest({
+                      ...request,
+                      season: event.target.value
+                        .split(",")
+                        .map((value) => value.trim())
+                        .filter(Boolean)
+                    })
                   }
                 />
               </div>
@@ -169,9 +177,15 @@ export default function AppClient() {
                 <div className="label">色</div>
                 <input
                   className="input"
-                  value={request.color ?? ""}
+                  value={(request.color ?? []).join(",")}
                   onChange={(event) =>
-                    setRequest({ ...request, color: event.target.value })
+                    setRequest({
+                      ...request,
+                      color: event.target.value
+                        .split(",")
+                        .map((value) => value.trim())
+                        .filter(Boolean)
+                    })
                   }
                 />
               </div>
@@ -181,9 +195,15 @@ export default function AppClient() {
                 <div className="label">素材</div>
                 <input
                   className="input"
-                  value={request.material ?? ""}
+                  value={(request.material ?? []).join(",")}
                   onChange={(event) =>
-                    setRequest({ ...request, material: event.target.value })
+                    setRequest({
+                      ...request,
+                      material: event.target.value
+                        .split(",")
+                        .map((value) => value.trim())
+                        .filter(Boolean)
+                    })
                   }
                 />
               </div>
