@@ -13,15 +13,22 @@ function supabaseClient() {
 
 export function buildCacheKey(request: SearchRequest) {
   const maxKey = request.budgetMax >= 20000 ? "unlimited" : Math.floor(request.budgetMax / 1000) * 1000;
+  const normalizeList = (values?: string[]) =>
+    (values ?? [])
+      .map((value) => normalizeText(value))
+      .filter(Boolean)
+      .sort()
+      .join(",");
   return [
     "v1",
     request.itemType,
     Math.floor(request.budgetMin / 1000) * 1000,
     maxKey,
-    request.season?.join(",") ?? "",
-    request.color?.join(",") ?? "",
-    request.material?.join(",") ?? "",
-    request.mood ?? "",
+    request.gender ?? "",
+    normalizeList(request.season),
+    normalizeList(request.color),
+    normalizeList(request.material),
+    normalizeText(request.mood ?? ""),
     normalizeText(request.freeText)
   ].join(":");
 }

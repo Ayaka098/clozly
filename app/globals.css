@@ -161,7 +161,7 @@ button, input, select, textarea {
 .topbar-inner {
   width: min(1100px, 92vw);
   margin: 0 auto;
-  padding: 18px 0;
+  padding: 14px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -172,6 +172,12 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   gap: 24px;
+}
+
+.tabbar {
+  display: flex;
+  align-items: center;
+  margin: -4px 0;
 }
 
 .logo {
@@ -411,10 +417,18 @@ button, input, select, textarea {
   }
 
   .tabs {
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
     overflow-x: visible;
-    padding-bottom: 6px;
+    padding-bottom: 5px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tab {
+    width: auto;
+    flex: 1 1 140px;
+    min-width: 0;
   }
 }
 
@@ -452,6 +466,7 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   gap: 16px;
+  transform: translateX(-8px);
 }
 
 .splash-mark {

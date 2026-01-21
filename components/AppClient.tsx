@@ -3,14 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { CandidateItem, SearchResponse, SearchRequest, UserProfile } from "@/lib/types";
 import { imageStore } from "@/lib/localImage";
-import { loadProfile, saveProfile } from "@/lib/profile";
+import { loadProfile } from "@/lib/profile";
 import ProductCard from "@/components/ProductCard";
 
 const defaultRequest: SearchRequest = {
-  freeText: "白のきれいめトップス",
+  freeText: "",
   itemType: "tops",
   budgetMin: 3000,
   budgetMax: 12000,
+  gender: undefined,
   season: ["春"],
   color: ["白"],
   material: [],
@@ -33,10 +34,14 @@ export default function AppClient() {
   const [items, setItems] = useState<CandidateItem[]>([]);
   const [queryPlan, setQueryPlan] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [cooldownUntil, setCooldownUntil] = useState<number | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
   const [profile, setProfile] = useState<UserProfile>({});
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [usedCache, setUsedCache] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = loadProfile();
@@ -46,6 +51,21 @@ export default function AppClient() {
       setImageUrl(URL.createObjectURL(file));
     });
   }, []);
+
+  useEffect(() => {
+    if (!cooldownUntil) {
+      setCooldownLeft(0);
+      return;
+    }
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
+      setCooldownLeft(remaining);
+      if (remaining === 0) setCooldownUntil(null);
+    };
+    tick();
+    const timer = window.setInterval(tick, 250);
+    return () => window.clearInterval(timer);
+  }, [cooldownUntil]);
 
   const prompt = useMemo(() => {
     const size = profile.usualSize ? `サイズ感は${profile.usualSize}。` : "";
@@ -57,15 +77,13 @@ export default function AppClient() {
       `背景はシンプルに。`;
   }, [profile.usualSize, request]);
 
-  const handleProfileChange = (key: keyof UserProfile, value: string) => {
-    const next = { ...profile, [key]: value };
-    setProfile(next);
-    saveProfile(next);
-  };
-
   const handleSearch = async () => {
+    if (loading || cooldownLeft > 0) return;
     setLoading(true);
+    setHasSearched(true);
+    setNote(null);
     setError(null);
+    setCooldownUntil(Date.now() + 10_000);
     try {
       const response = await fetch("/api/search", {
         method: "POST",
@@ -80,6 +98,7 @@ export default function AppClient() {
       setItems(data.items);
       setQueryPlan(data.queryPlan);
       setUsedCache(data.usedCache);
+      setNote(data.note ?? null);
     } catch (err) {
       setError("検索に失敗しました。条件を変えて再試行してください。");
     } finally {
@@ -111,6 +130,7 @@ export default function AppClient() {
                 className="input"
                 rows={3}
                 value={request.freeText}
+                placeholder="詳しい条件を書いてください。例：ダメージジーンズ、きらきら"
                 onChange={(event) =>
                   setRequest({ ...request, freeText: event.target.value })
                 }
@@ -130,6 +150,25 @@ export default function AppClient() {
                     {option.label}
                   </option>
                 ))}
+              </select>
+            </div>
+            <div>
+              <div className="label">対象</div>
+              <select
+                className="input"
+                value={request.gender ?? ""}
+                onChange={(event) =>
+                  setRequest({
+                    ...request,
+                    gender: event.target.value
+                      ? (event.target.value as "mens" | "womens")
+                      : undefined
+                  })
+                }
+              >
+                <option value="">指定なし</option>
+                <option value="womens">レディース</option>
+                <option value="mens">メンズ</option>
               </select>
             </div>
             <div className="grid-2">
@@ -232,53 +271,21 @@ export default function AppClient() {
                 }
               />
             </div>
-            <button className="btn" onClick={handleSearch} disabled={loading}>
+            <button
+              className="btn"
+              onClick={handleSearch}
+              disabled={loading || cooldownLeft > 0}
+            >
               {loading ? "検索中..." : "4件を提案"}
             </button>
+            {cooldownLeft > 0 && (
+              <p style={{ fontSize: "0.85rem", color: "var(--mute)" }}>
+                あと{cooldownLeft}秒
+              </p>
+            )}
             {error && <p>{error}</p>}
             {usedCache && <p>キャッシュ結果を表示中</p>}
-          </div>
-        </div>
-        <div id="basics" className="card">
-          <h2>基本情報</h2>
-          <p>わかる範囲で入力してください。</p>
-          <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
-            <div className="grid-2">
-              <div>
-                <div className="label">身長</div>
-                <input
-                  className="input"
-                  placeholder="cm"
-                  value={profile.height ?? ""}
-                  onChange={(event) => handleProfileChange("height", event.target.value)}
-                />
-              </div>
-              <div>
-                <div className="label">体重</div>
-                <input
-                  className="input"
-                  placeholder="kg"
-                  value={profile.weight ?? ""}
-                  onChange={(event) => handleProfileChange("weight", event.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="label">普段サイズ</div>
-              <input
-                className="input"
-                value={profile.usualSize ?? ""}
-                onChange={(event) => handleProfileChange("usualSize", event.target.value)}
-              />
-            </div>
-            <div>
-              <div className="label">体型傾向</div>
-              <input
-                className="input"
-                value={profile.bodyType ?? ""}
-                onChange={(event) => handleProfileChange("bodyType", event.target.value)}
-              />
-            </div>
+            {note && <p>{note}</p>}
           </div>
         </div>
       </div>
@@ -297,6 +304,12 @@ export default function AppClient() {
             <ProductCard key={item.id} item={item} />
           ))}
         </div>
+        {hasSearched && items.length > 0 && items.length < 4 && (
+          <p style={{ marginTop: 12 }}>候補が一部不足しています。</p>
+        )}
+        {hasSearched && items.length === 0 && !error && (
+          <p style={{ marginTop: 12 }}>候補が見つかりませんでした。</p>
+        )}
       </div>
       <div className="grid-2" style={{ marginTop: 18 }}>
         <div id="account" className="card">

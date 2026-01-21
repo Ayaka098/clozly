@@ -12,6 +12,7 @@ export type SearchRequest = {
   itemType: ItemType;
   budgetMin: number;
   budgetMax: number;
+  gender?: "mens" | "womens";
   season?: string[];
   color?: string[];
   material?: string[];
@@ -21,7 +22,7 @@ export type SearchRequest = {
 
 export type CandidateItem = {
   id: string;
-  site: "amazon" | "zozo";
+  site: "amazon" | "zozo" | "rakuten";
   name: string;
   price: number;
   imageUrl?: string;
@@ -36,6 +37,7 @@ export type SearchResponse = {
   queryPlan: string[];
   items: CandidateItem[];
   usedCache: boolean;
+  note?: string;
 };
 
 export type UserProfile = {
