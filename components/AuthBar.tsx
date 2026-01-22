@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function AuthBar() {
@@ -21,9 +21,9 @@ export default function AuthBar() {
         マイページ
       </Link>
     ) : (
-      <Link href="/account" className="auth-login">
+      <button className="auth-login" onClick={() => signIn("google")} type="button">
         ログイン
-      </Link>
+      </button>
     )
   );
 }

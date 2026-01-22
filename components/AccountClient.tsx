@@ -52,6 +52,12 @@ export default function AccountClient() {
     window.setTimeout(() => setToast(null), 1800);
   };
 
+  const handleLogout = () => {
+    if (window.confirm("ログアウトしますか？")) {
+      signOut();
+    }
+  };
+
   const handleImageUpload = async (file: File | null) => {
     if (!file) return;
     await imageStore.save(file);
@@ -139,7 +145,7 @@ export default function AccountClient() {
               ))}
             </div>
           </div>
-          <button className="btn" onClick={handleProfileSave}>
+          <button className="btn btn-inline" onClick={handleProfileSave}>
             保存
           </button>
           {toast && <div className="toast">{toast}</div>}
@@ -159,13 +165,16 @@ export default function AccountClient() {
               style={{ width: "100%", borderRadius: 16, border: "1px solid var(--line)" }}
             />
           )}
-          <button className="btn btn-secondary" onClick={handleImageClear}>
+          <button
+            className="btn btn-secondary btn-inline btn-soft btn-horizontal"
+            onClick={handleImageClear}
+          >
             画像を削除
           </button>
         </div>
       </div>
       <div>
-        <button className="btn btn-danger" onClick={() => signOut()}>
+        <button className="btn btn-danger" onClick={handleLogout}>
           ログアウト
         </button>
       </div>

@@ -32,7 +32,7 @@ export default function RootLayout({
             <header className="topbar">
               <div className="topbar-inner">
                 <div className="topbar-left">
-                  <Link className="logo" href="/search">
+                  <Link className="logo" href="/">
                     <img
                       className="logo-mark"
                       src="/Clozly_ロゴ_ハンガーのみ.png"
