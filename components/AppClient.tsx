@@ -71,7 +71,10 @@ export default function AppClient() {
     const size = profile.usualSize ? `サイズ感は${profile.usualSize}。` : "";
     const colors = request.color?.join(" ") ?? "";
     const materials = request.material?.join(" ") ?? "";
-    return `全身写真の人物が、以下の服を試着しているイメージを生成してください。\n` +
+    return `人物画像（全身写真）と商品画像（服の写真）をアップロードします。GeminiのNano Bananaを使って、人物が商品を試着している自然な合成画像を生成してください。\n` +
+      `人物画像は人物の参照、商品画像は服の参照です。人物はそのまま、服だけを置き換えるイメージでお願いします。\n` +
+      `出力は必ず頭から足先までの全身。足元が切れない構図で生成してください。\n` +
+      `もし人物画像が全身でなくても、人物の雰囲気を保った全身を生成してください。\n` +
       `服の説明: ${request.freeText}。${colors} ${request.mood ?? ""} ${materials}\n` +
       `${size}\n` +
       `背景はシンプルに。`;
@@ -349,7 +352,7 @@ export default function AppClient() {
         </div>
         <div className="card">
           <h2>Gemini用プロンプト</h2>
-          <p>人物画像を添えて、Gemini/Nano Bananaで生成してください。</p>
+          <p>人物画像→商品画像の順で添えて、GeminiのNano Bananaで生成してください。</p>
           <textarea className="input" rows={8} value={prompt} readOnly />
           <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
             <button

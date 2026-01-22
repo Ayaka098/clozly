@@ -620,6 +620,14 @@ button, input, select, textarea {
   font-size: 0.9rem;
 }
 
+.tryon-prompt-header .tryon-product-action {
+  background: #f8f1e9;
+}
+
+.tryon-prompt-header .tryon-product-action:hover {
+  background: #f1e7dc;
+}
+
 .tryon-steps {
   padding: 4px 2px;
   color: var(--mute);
@@ -697,24 +705,53 @@ button, input, select, textarea {
   }
 
   .topbar-inner {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    align-items: center;
+  }
+
+  .topbar-left {
+    width: 100%;
+    flex: 1 1 auto;
     gap: 12px;
-    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .logo {
+    font-size: 2rem;
+  }
+
+  .logo-mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .tabbar {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .tabs {
     justify-content: flex-start;
     width: 100%;
-    overflow-x: visible;
-    padding-bottom: 5px;
-    flex-wrap: wrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    flex-wrap: nowrap;
     gap: 8px;
   }
 
   .tab {
     width: auto;
-    flex: 1 1 140px;
-    min-width: 0;
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 4px 10px;
+  }
+
+  .auth-login,
+  .auth-tab {
+    padding: 8px 14px;
+    font-size: 0.9rem;
   }
 }
 
