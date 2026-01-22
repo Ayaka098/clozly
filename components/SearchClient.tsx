@@ -1,9 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SearchRequest, SearchResponse } from "@/lib/types";
-import { saveSearchSession } from "@/lib/searchSession";
+import {
+  clearSearchRequest,
+  loadSearchRequest,
+  loadSearchSession,
+  saveSearchRequest,
+  saveSearchSession
+} from "@/lib/searchSession";
 
 const defaultRequest: SearchRequest = {
   freeText: "",
@@ -47,6 +53,15 @@ export default function SearchClient() {
   const [request, setRequest] = useState<SearchRequest>(defaultRequest);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedRequest = loadSearchRequest() ?? loadSearchSession()?.request;
+    if (storedRequest) setRequest(storedRequest);
+  }, []);
+
+  useEffect(() => {
+    saveSearchRequest(request);
+  }, [request]);
 
   const range = useMemo(() => {
     const minPercent = ((request.budgetMin - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
@@ -292,6 +307,16 @@ export default function SearchClient() {
           ) : (
             "探す"
           )}
+        </button>
+        <button
+          className="btn btn-secondary"
+          type="button"
+          onClick={() => {
+            setRequest(defaultRequest);
+            clearSearchRequest();
+          }}
+        >
+          条件をリセット
         </button>
         {error && <p>{error}</p>}
       </div>
