@@ -129,6 +129,27 @@ button, input, select, textarea {
   color: var(--chocolate);
 }
 
+.btn-soft {
+  background: rgba(183, 122, 74, 0.12);
+  border-color: rgba(183, 122, 74, 0.25);
+  color: var(--chocolate);
+}
+
+.btn-soft:hover {
+  background: rgba(183, 122, 74, 0.2);
+}
+
+.btn-inline {
+  justify-self: start;
+  width: auto;
+}
+
+.btn-horizontal {
+  padding: 8px 18px;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
 .btn-danger {
   background: #c94b42;
   color: #fff;
