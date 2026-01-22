@@ -148,13 +148,15 @@ export default function AccountClient() {
               ))}
             </div>
           </div>
-          <button className="btn btn-inline" onClick={handleProfileSave}>
-            保存
-          </button>
-          {toast && <div className="toast">{toast}</div>}
+          <div className="profile-save-row">
+            <button className="btn btn-inline" onClick={handleProfileSave}>
+              保存
+            </button>
+            {toast && <span className="profile-save-toast">{toast}</span>}
+          </div>
         </div>
         <div className="card" style={{ display: "grid", gap: 14 }}>
-          <div className="label">全身画像</div>
+          <div className="label">人物画像</div>
           <input
             className="input"
             type="file"
@@ -164,7 +166,7 @@ export default function AccountClient() {
           {imageUrl && (
             <img
               src={imageUrl}
-              alt="全身画像"
+              alt="人物画像"
               style={{ width: "100%", borderRadius: 16, border: "1px solid var(--line)" }}
             />
           )}
