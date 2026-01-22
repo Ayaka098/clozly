@@ -21,7 +21,11 @@ export default function AuthBar() {
         マイページ
       </Link>
     ) : (
-      <button className="auth-login" onClick={() => signIn("google")} type="button">
+      <button
+        className="auth-login"
+        onClick={() => signIn("google", { callbackUrl: "/account" }, { prompt: "select_account" })}
+        type="button"
+      >
         ログイン
       </button>
     )
