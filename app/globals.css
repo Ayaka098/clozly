@@ -150,6 +150,13 @@ button, input, select, textarea {
   border-radius: 999px;
 }
 
+.btn-image-clear {
+  width: 100%;
+  justify-content: center;
+  padding: 2px 18px;
+  line-height: 1;
+}
+
 .btn-danger {
   background: #c94b42;
   color: #fff;
@@ -543,6 +550,18 @@ button, input, select, textarea {
   flex-wrap: wrap;
   gap: 12px;
   justify-content: flex-start;
+}
+
+.results-actions .btn-secondary {
+  background: #fff;
+  border-color: rgba(58, 43, 30, 0.28);
+  color: var(--chocolate);
+  box-shadow: 0 10px 24px rgba(58, 43, 30, 0.08);
+}
+
+.results-actions .btn-secondary:hover {
+  background: #f6eee6;
+  border-color: rgba(58, 43, 30, 0.4);
 }
 
 .product-card {

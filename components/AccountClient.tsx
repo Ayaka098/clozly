@@ -54,7 +54,7 @@ export default function AccountClient() {
 
   const handleLogout = () => {
     if (window.confirm("ログアウトしますか？")) {
-      signOut();
+      signOut({ callbackUrl: "/" });
     }
   };
 
@@ -73,7 +73,10 @@ export default function AccountClient() {
     return (
       <section className="fade-in">
         <div className="auth-login-center">
-          <button className="auth-login-button" onClick={() => signIn("google")}>
+          <button
+            className="auth-login-button"
+            onClick={() => signIn("google", { callbackUrl: "/account" }, { prompt: "select_account" })}
+          >
             <span className="auth-login-mark" aria-hidden="true" />
             <span className="auth-login-text">Googleログイン</span>
           </button>
@@ -166,7 +169,7 @@ export default function AccountClient() {
             />
           )}
           <button
-            className="btn btn-secondary btn-inline btn-soft btn-horizontal"
+            className="btn btn-secondary btn-inline btn-soft btn-horizontal btn-image-clear"
             onClick={handleImageClear}
           >
             画像を削除
