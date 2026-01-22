@@ -52,7 +52,10 @@ export default function TryonClient() {
           .join("\n")
       : "";
     return (
-      `全身写真の人物が、以下の服を試着しているイメージを生成してください。\n` +
+      `人物画像（全身写真）と商品画像（服の写真）をアップロードします。GeminiのNano Bananaを使って、人物が商品を試着している自然な合成画像を生成してください。\n` +
+      `人物画像は人物の参照、商品画像は服の参照です。人物はそのまま、服だけを置き換えるイメージでお願いします。\n` +
+      `出力は必ず頭から足先までの全身。足元が切れない構図で生成してください。\n` +
+      `もし人物画像が全身でなくても、人物の雰囲気を保った全身を生成してください。\n` +
       `服の説明: ${description}\n` +
       (itemLines ? `\n[商品情報]\n${itemLines}\n` : "") +
       `${sizeText}\n` +
@@ -98,7 +101,7 @@ export default function TryonClient() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
             {selectedItem?.imageUrl && (
               <button
-                className="btn btn-secondary tryon-action"
+                className="btn btn-secondary tryon-action tryon-product-action"
                 onClick={async () => {
                   try {
                     const proxyUrl = resolveProductImageUrl();
@@ -123,7 +126,7 @@ export default function TryonClient() {
             )}
             {selectedItem?.url && (
               <a
-                className="btn btn-secondary tryon-action"
+                className="btn btn-secondary tryon-action tryon-product-action"
                 href={selectedItem.url}
                 target="_blank"
                 rel="noreferrer"
@@ -142,7 +145,9 @@ export default function TryonClient() {
           </div>
         </div>
         <div className="tryon-steps">
-          <p>人物・商品画像、プロンプトをそれぞれGeminiに貼り付けてください。</p>
+          <p>
+            人物画像→商品画像の順でアップロードし、プロンプトを添えてNano Bananaで生成してください。
+          </p>
         </div>
         <textarea className="input" rows={7} value={prompt} readOnly />
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>

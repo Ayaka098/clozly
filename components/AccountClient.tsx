@@ -70,19 +70,7 @@ export default function AccountClient() {
   };
 
   if (!isLoggedIn) {
-    return (
-      <section className="fade-in">
-        <div className="auth-login-center">
-          <button
-            className="auth-login-button"
-            onClick={() => signIn("google", { callbackUrl: "/account" }, { prompt: "select_account" })}
-          >
-            <span className="auth-login-mark" aria-hidden="true" />
-            <span className="auth-login-text">Googleログイン</span>
-          </button>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
