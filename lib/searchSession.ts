@@ -7,6 +7,7 @@ type SearchSession = {
 };
 
 const STORAGE_KEY = "clozly:lastSearch";
+const REQUEST_KEY = "clozly:searchRequest";
 
 export const saveSearchSession = (request: SearchRequest, response: SearchResponse) => {
   if (typeof window === "undefined") return;
@@ -28,4 +29,25 @@ export const loadSearchSession = (): SearchSession | null => {
 export const clearSearchSession = () => {
   if (typeof window === "undefined") return;
   window.sessionStorage.removeItem(STORAGE_KEY);
+};
+
+export const saveSearchRequest = (request: SearchRequest) => {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(REQUEST_KEY, JSON.stringify(request));
+};
+
+export const loadSearchRequest = (): SearchRequest | null => {
+  if (typeof window === "undefined") return null;
+  const raw = window.sessionStorage.getItem(REQUEST_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as SearchRequest;
+  } catch {
+    return null;
+  }
+};
+
+export const clearSearchRequest = () => {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.removeItem(REQUEST_KEY);
 };
