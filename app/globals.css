@@ -153,7 +153,7 @@ button, input, select, textarea {
 .btn-image-clear {
   width: 100%;
   justify-content: center;
-  padding: 2px 18px;
+  padding: 15px 18px;
   line-height: 1;
 }
 
@@ -165,6 +165,17 @@ button, input, select, textarea {
 
 .btn-danger:hover {
   background: #a63a32;
+}
+
+.profile-save-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-save-toast {
+  color: var(--mute);
+  font-size: 0.9rem;
 }
 
 @keyframes spin {
@@ -567,6 +578,96 @@ button, input, select, textarea {
 .product-card {
   display: grid;
   gap: 12px;
+}
+
+.product-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.tryon-layout {
+  display: grid;
+  gap: 18px;
+}
+
+.tryon-image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tryon-prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tryon-prompt-header .btn-secondary {
+  background: #f3e1cf;
+  border-color: rgba(58, 43, 30, 0.35);
+  color: var(--chocolate);
+  text-decoration: none;
+}
+
+.tryon-prompt-header .btn-secondary:hover {
+  background: #e8d1bb;
+}
+
+.tryon-action {
+  padding: 9px 18px;
+  font-size: 0.9rem;
+}
+
+.tryon-steps {
+  padding: 4px 2px;
+  color: var(--mute);
+  font-size: 0.82rem;
+}
+
+.tryon-steps ol {
+  margin: 8px 0 0 20px;
+  display: grid;
+  gap: 6px;
+}
+
+.tryon-image-header .btn-secondary {
+  background: #f3e8dc;
+  border-color: rgba(58, 43, 30, 0.35);
+  color: var(--chocolate);
+}
+
+.tryon-image-header .btn-secondary:hover {
+  background: #ead6c3;
+}
+
+.tryon-image-stack {
+  width: min(260px, 100%);
+  display: grid;
+  gap: 10px;
+}
+
+.tryon-image {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+}
+
+.tryon-image-copy {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .tryon-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
+    align-items: start;
+  }
+
+  .tryon-layout > .card {
+    height: 100%;
+  }
 }
 
 .product-image {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SearchRequest, SearchResponse } from "@/lib/types";
 import { loadSearchSession, saveSearchSession } from "@/lib/searchSession";
+import { saveTryonSelection } from "@/lib/tryonSession";
 import ProductCard from "@/components/ProductCard";
 
 type StoredSession = {
@@ -48,6 +49,30 @@ export default function ResultsClient() {
     }
   };
 
+  const buildTryonDescription = (item: SearchResponse["items"][number]) => {
+    const parts = [`商品名: ${item.name}`];
+    if (item.brand) parts.push(`ブランド: ${item.brand}`);
+    if (item.price) parts.push(`価格: ${item.price.toLocaleString()}円`);
+    return parts.join(" / ");
+  };
+
+  const handleTryon = (item: SearchResponse["items"][number]) => {
+    const description = buildTryonDescription(item);
+    saveTryonSelection(description, {
+      id: item.id,
+      name: item.name,
+      brand: item.brand,
+      price: item.price,
+      url: item.url,
+      imageUrl: item.imageUrl
+        ? `/api/image-proxy?url=${encodeURIComponent(item.imageUrl)}`
+        : undefined,
+      imageOriginalUrl: item.imageUrl,
+      summary: item.summary
+    });
+    router.push("/tryon");
+  };
+
   if (!session) {
     return (
       <section className="fade-in">
@@ -71,7 +96,7 @@ export default function ResultsClient() {
         <h2>あなたにぴったりのアイテムが見つかりました！</h2>
         <div className="results-grid">
           {items.map((item) => (
-            <ProductCard key={item.id} item={item} />
+            <ProductCard key={item.id} item={item} onTryon={handleTryon} />
           ))}
         </div>
         {response.note && <p style={{ marginTop: 8 }}>{response.note}</p>}

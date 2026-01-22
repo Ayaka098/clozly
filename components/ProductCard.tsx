@@ -1,6 +1,11 @@
 import { CandidateItem } from "@/lib/types";
 
-export default function ProductCard({ item }: { item: CandidateItem }) {
+type ProductCardProps = {
+  item: CandidateItem;
+  onTryon?: (item: CandidateItem) => void;
+};
+
+export default function ProductCard({ item, onTryon }: ProductCardProps) {
   return (
     <div className="card product-card">
       <div className="product-image">
@@ -35,9 +40,16 @@ export default function ProductCard({ item }: { item: CandidateItem }) {
           購入前に公式サイズ表で確認してください。
         </p>
       </div>
-      <a className="btn" href={item.url} target="_blank" rel="noreferrer">
-        購入ページへ
-      </a>
+      <div className="product-actions">
+        <a className="btn" href={item.url} target="_blank" rel="noreferrer">
+          購入ページへ
+        </a>
+        {onTryon && (
+          <button className="btn btn-secondary" onClick={() => onTryon(item)} type="button">
+            この服を試着
+          </button>
+        )}
+      </div>
     </div>
   );
 }

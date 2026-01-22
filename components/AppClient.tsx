@@ -320,14 +320,14 @@ export default function AppClient() {
       <div className="grid-2" style={{ marginTop: 18 }}>
         <div id="account" className="card">
           <h2>アカウント</h2>
-          <p>ログイン情報と全身画像を管理します。</p>
+          <p>ログイン情報と人物画像を管理します。</p>
           <div style={{ marginTop: 12, display: "grid", gap: 12 }}>
             <p>ログイン状態の確認は右上のアイコンから。</p>
           </div>
         </div>
         <div className="card">
-          <h2>全身画像の保存</h2>
-          <p>試着イメージ生成のために、全身画像をローカル保存します。</p>
+          <h2>人物画像の保存</h2>
+          <p>試着イメージ生成のために、人物画像をローカル保存します。</p>
           <div style={{ marginTop: 12, display: "grid", gap: 12 }}>
             <input
               className="input"
@@ -338,7 +338,7 @@ export default function AppClient() {
             {imageUrl && (
               <img
                 src={imageUrl}
-                alt="全身画像"
+                alt="人物画像"
                 style={{ width: "100%", borderRadius: 16, border: "1px solid var(--line)" }}
               />
             )}
@@ -349,7 +349,7 @@ export default function AppClient() {
         </div>
         <div className="card">
           <h2>Gemini用プロンプト</h2>
-          <p>全身画像を添えて、Gemini/Nano Bananaで生成してください。</p>
+          <p>人物画像を添えて、Gemini/Nano Bananaで生成してください。</p>
           <textarea className="input" rows={8} value={prompt} readOnly />
           <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
             <button

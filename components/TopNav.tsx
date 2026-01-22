@@ -3,9 +3,10 @@
 import { usePathname, useRouter } from "next/navigation";
 
 const tabs = [
-  { href: "/search", label: "探す" },
-  { href: "/quiz", label: "タイプ診断" },
-  { href: "/tryon", label: "試着" }
+  { href: "/search", label: "検索" },
+  { href: "/latest", label: "検索結果" },
+  { href: "/tryon", label: "試着" },
+  { href: "/quiz", label: "タイプ診断" }
 ];
 
 export default function TopNav() {
