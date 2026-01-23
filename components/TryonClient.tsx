@@ -101,6 +101,26 @@ export default function TryonClient() {
         <div className="tryon-prompt-header">
           <div className="label">プロンプト</div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            {imageFile && (
+              <button
+                className="btn btn-secondary tryon-action tryon-product-action"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.write([
+                      new ClipboardItem({ [imageFile.type]: imageFile })
+                    ]);
+                    setImageCopyStatus("人物画像をコピーしました。");
+                  } catch (error) {
+                    setImageCopyStatus("人物画像のコピーに失敗しました。");
+                  } finally {
+                    window.setTimeout(() => setImageCopyStatus(null), 2000);
+                  }
+                }}
+                type="button"
+              >
+                人物画像をコピー
+              </button>
+            )}
             {selectedItem?.imageUrl && (
               <button
                 className="btn btn-secondary tryon-action tryon-product-action"

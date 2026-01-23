@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SearchRequest, SearchResponse } from "@/lib/types";
 import { loadSearchSession, saveSearchSession } from "@/lib/searchSession";
-import { saveTryonSelection } from "@/lib/tryonSession";
 import ProductCard from "@/components/ProductCard";
+import { saveTryonSelection } from "@/lib/tryonSession";
 
 type StoredSession = {
   request: SearchRequest;
@@ -77,8 +77,8 @@ export default function ResultsClient() {
     return (
       <section className="fade-in">
         <div className="card" style={{ display: "grid", gap: 12 }}>
-          <h2>あなたにぴったりのアイテムが見つかりました！</h2>
-          <p>検索条件が見つかりませんでした。探すページに戻ってください。</p>
+          <h2>見つかりませんでした...</h2>
+          <p>候補が見つかりませんでした。検索条件を変えて再度探してみてください。</p>
           <button className="btn" onClick={() => router.push("/search")}>
             探すページへ
           </button>
@@ -93,7 +93,7 @@ export default function ResultsClient() {
   return (
     <section className="fade-in" style={{ display: "grid", gap: 18 }}>
       <div className="card" style={{ display: "grid", gap: 16 }}>
-        <h2>あなたにぴったりのアイテムが見つかりました！</h2>
+        <h2>{items.length === 0 ? "見つかりませんでした..." : "あなたにぴったりのアイテムが見つかりました！"}</h2>
         <div className="results-grid">
           {items.map((item) => (
             <ProductCard key={item.id} item={item} onTryon={handleTryon} />
@@ -101,7 +101,9 @@ export default function ResultsClient() {
         </div>
         {response.note && <p style={{ marginTop: 8 }}>{response.note}</p>}
         {items.length === 0 && !response.note && (
-          <p style={{ marginTop: 8 }}>候補が見つかりませんでした。</p>
+          <p style={{ marginTop: 8 }}>
+            候補が見つかりませんでした。検索条件を変えて再度探してみてください。
+          </p>
         )}
       </div>
       <div className="results-actions">
@@ -117,9 +119,6 @@ export default function ResultsClient() {
         </button>
         <button className="btn btn-secondary" onClick={() => router.push("/search")}>
           戻る
-        </button>
-        <button className="btn btn-secondary" onClick={() => router.push("/tryon")}>
-          試着
         </button>
       </div>
       {error && (
